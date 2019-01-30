@@ -1,0 +1,1 @@
+../../../../JitsiMeetSDK/jitsi-meet-ios-sdk-releases-1.21.1/Frameworks/JitsiMeet.framework/Headers/JitsiMeet-Swift.h

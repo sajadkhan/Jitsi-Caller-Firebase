@@ -1,0 +1,6 @@
+module Pods_JitsiSample {
+  umbrella header "Pods-JitsiSample-umbrella.h"
+
+  export *
+  module * { export * }
+}
