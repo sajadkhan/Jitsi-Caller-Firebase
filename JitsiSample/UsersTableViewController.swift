@@ -27,6 +27,7 @@ class UsersTableViewController: UITableViewController {
         
         self.navigationController?.view.makeToastActivity(.center)
         
+        //Get and Observe users.
         ref.child("users").observe(.childAdded) { [weak self] (snapshot) in
             self?.navigationController?.view.hideToastActivity()
             guard let strongSelf = self else {
@@ -38,10 +39,13 @@ class UsersTableViewController: UITableViewController {
             strongSelf.tableView.insertRows(at: [IndexPath(row: strongSelf.users.count-1, section: 0)], with: .automatic)
         }
         
+        
+        //Observe for in comming call
         ref.child("users").child(JSUser.loggedInUser!.id).child("incommingCalls").observe(.childAdded) { [weak self] (snapshot) in
             
             let callAlert = UIAlertController(title: "Incomming Call", message: "You have a call, please respond.", preferredStyle: .alert)
             
+            //If user rejects the call we remove it from DB.
             callAlert.addAction(UIAlertAction(title: "Reject", style: .cancel, handler: { [weak self] action in
                 self?.ref.child("users").child(JSUser.loggedInUser!.id).child("incommingCalls").child(snapshot.key).removeValue()
             }))
@@ -97,6 +101,8 @@ class UsersTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let user = users[indexPath.row]
         let callRoomName = "\(JSUser.loggedInUser!.name)-\(user.name)".replacingOccurrences(of: " ", with: "")
+        
+        //Create a new call to the user we are calling
         ref.child("users").child(user.id).child("incommingCalls").setValue(["room-id":callRoomName])
         self.callCleanUpBlock = { [weak self] in 
             self?.ref.child("users").child(user.id).child("incommingCalls").child("room-id").removeValue()

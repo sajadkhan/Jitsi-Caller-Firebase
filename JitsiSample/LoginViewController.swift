@@ -67,6 +67,7 @@ class LoginViewController: UIViewController {
                 return
             }
             
+            //save useer details in to defaults from the Database
             self.ref.child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 guard let userSnapshot = snapshot.value as? [String: String] else { return }
                 self.saveUserInfo(uid: user.uid , name: userSnapshot["username"]!)
@@ -94,6 +95,8 @@ class LoginViewController: UIViewController {
             textfield.isSecureTextEntry = true
         }
         
+        
+        //Sign Up User form
         signUpAlertContrller.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         signUpAlertContrller.addAction(UIAlertAction(title: "Ok", style: .default, handler: { [weak signUpAlertContrller](action) in
             if signUpAlertContrller != nil {
@@ -112,6 +115,8 @@ class LoginViewController: UIViewController {
                     
                 
                     self.view.makeToastActivity(.center)
+                    
+                    //Authenticate New User
                     Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
                         
                         guard error == nil else {
@@ -129,6 +134,8 @@ class LoginViewController: UIViewController {
                                     self.showAlert(with: "Failure", message: error!.localizedDescription)
                                     return
                                 }
+                                
+                                //Add user to the Database
                                 self.ref.child("users").child(authResult.user.uid).setValue(["username": userName])
                                 self.saveUserInfo(uid: authResult.user.uid , name: userName)
                                 self.performSegue(withIdentifier: "show users", sender: nil)
